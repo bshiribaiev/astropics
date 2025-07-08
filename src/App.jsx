@@ -37,7 +37,8 @@ function App() {
   }
 
   const handleBan = (newItem) => {
-    setBanList(prevBanList => [...prevBanList, newItem])
+    if (!(banList.includes(newItem)))
+      setBanList(prevBanList => [...prevBanList, newItem])
   }
 
   const removeBan = (itemR) => {
@@ -46,7 +47,8 @@ function App() {
   return (
     <>
       <div> 
-        <button onClick={handleClick}> 
+        <h1>Astropics</h1>
+        <button onClick={handleClick} className='explore'> 
           Explore
         </button>
       </div>
@@ -72,7 +74,7 @@ function App() {
             <div>
               <h2>Ban List</h2>
               {banList && (
-                <div> 
+                <div className='ban'> 
                   {banList.map(item => (
                     <button onClick={() => removeBan(item)}>{item}</button>
                   ))}
