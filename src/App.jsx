@@ -5,14 +5,25 @@ import './App.css'
 function App() {
   const API_KEY = import.meta.env.VITE_NASA_API_KEY
   const [apodData, setApodData] = useState(null)
+  const [banList, setBanList] = useState([])
 
-  const getData = async() => {
+  const getDate = () => {
     const month = Math.floor(Math.random() * 12) + 1
     const day = Math.floor(Math.random() * 28) + 1
-    const url = `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}&date=2024-${month}-${day}`
+    const date = `2024-${month}-${day}`
+    if (banList.includes(date))
+      return getDate()
+    return date
+  }
+
+  const getData = async() => {
+    const date = getDate()
+    const url = `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}&date=${date}`
 
     try {
-      const response = await axios.get(url)
+      let response = await axios.get(url)
+      while (banList.includes(response.data.copyright))
+        response = await axios.get(url)
       return response.data
     }
     catch(e) {
@@ -25,6 +36,13 @@ function App() {
     setApodData(data)
   }
 
+  const handleBan = (newItem) => {
+    setBanList(prevBanList => [...prevBanList, newItem])
+  }
+
+  const removeBan = (itemR) => {
+    setBanList(prevBanList => {return prevBanList.filter(item => item !== itemR)})
+  }
   return (
     <>
       <div> 
@@ -38,9 +56,9 @@ function App() {
           <div className='nasa'>
             <h2>{apodData.title}</h2> 
             <div className='buttons'> 
-              <button>{apodData.date}</button>
+              <button onClick={() => handleBan(apodData.date)}>{apodData.date}</button>
               {apodData.copyright ? (
-                <button>{apodData.copyright}</button>
+                <button onClick={() => handleBan(apodData.copyright)}>{apodData.copyright}</button>
               ) : (
                 <button>No copyright info</button>
               )}
@@ -50,7 +68,19 @@ function App() {
             <div className='pic'>
               <img src={apodData.url} alt={apodData.title} /> 
             </div>
+
+            <div>
+              <h2>Ban List</h2>
+              {banList && (
+                <div> 
+                  {banList.map(item => (
+                    <button onClick={() => removeBan(item)}>{item}</button>
+                  ))}
+                </div> 
+              )}
+            </div>
           </div>
+
         )}
       </div>
     </>
