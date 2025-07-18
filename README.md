@@ -1,10 +1,8 @@
-Astropics
+## Astropics
 
 **Shows random astronomy pictures of the day (APOD) from 2024**
 
-## Video Walkthrough
-
-Here's a walkthrough:
+Video Walkthrough
 
 <img src='walkthrough.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
